@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  avatarUrl String? // opsional
+  createdAt DateTime @default(now())
+
+  // Relasi
+  tasksCreated    Task[]           @relation("CreatedTasks")
+  taskSubmissions TaskSubmission[]
+  portfolios      Portfolio[]
+  userBadges      UserBadge[]
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  category    TaskCategory
+  points      Int
+  dueDate     DateTime
+  createdAt   DateTime     @default(now())
+
+  createdBy String
+  creator   User   @relation("CreatedTasks", fields: [createdBy], references: [id])
+
+  submissions TaskSubmission[]
+}
+
+model TaskSubmission {
+  id             String     @id @default(uuid())
+  taskId         String
+  userId         String
+  status         TaskStatus
+  completionNote String?
+  score          Int?
+  submittedAt    DateTime   @default(now())
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Portfolio {
+  id          String        @id @default(uuid())
+  userId      String
+  title       String
+  type        PortfolioType
+  fileUrl     String
+  description String?
+  isPublic    Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Badge {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  iconUrl     String
+  users       UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(uuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum TaskCategory {
+  harian
+  mingguan
+  bulanan
+  tahunan
+}
+
+enum TaskStatus {
+  belum
+  dalam_proses
+  selesai
+}
+
+enum PortfolioType {
+  tulisan
+  video
+  gambar
+  podcast
+}
