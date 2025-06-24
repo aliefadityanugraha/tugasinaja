@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev" : "tsc && node dist/app.js",
+    "dev": "tsc && node --watch dist/app.js",
     "prisma": "prisma",
     "migrate": "prisma migrate dev"
   },
@@ -16,7 +16,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.5.0",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1"
   },

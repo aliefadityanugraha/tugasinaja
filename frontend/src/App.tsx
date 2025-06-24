@@ -1,14 +1,15 @@
 import AppRouter from './routes/AppRouter'
-import { ThemeConfig } from "flowbite-react";
+import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from './contexts/AuthContext'
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <ThemeConfig dark={false} />
-      <AppRouter />
-    </>
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+      <AuthProvider>
+        <AppRouter/>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
-export default App
+

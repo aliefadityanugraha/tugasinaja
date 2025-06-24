@@ -42,18 +42,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPortfoliosByUser = exports.getAllPortfolios = exports.createPortfolio = void 0;
+exports.deletePortfolio = exports.updatePortfolio = exports.getPortfoliosByUser = exports.getAllPortfolios = exports.createPortfolio = void 0;
 const portfolioService = __importStar(require("../services/portfolioService"));
 const createPortfolio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { title, description, userId, type, fileUrl } = req.body;
+        console.log(title, description, userId, type, fileUrl);
         if (!title || !description || !userId || !type || !fileUrl) {
             return res.status(400).json({ error: 'Data tidak lengkap' });
         }
         const portfolio = yield portfolioService.createPortfolio({ title, description, userId, type, fileUrl });
         res.status(201).json(portfolio);
+        console.log("POST | http://localhost:" + process.env.PORT + "/api/portfolios");
     }
     catch (err) {
+        console.log(err);
         res.status(500).json({ error: 'Gagal menambahkan portofolio' });
     }
 });
@@ -61,7 +64,8 @@ exports.createPortfolio = createPortfolio;
 const getAllPortfolios = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const portfolios = yield portfolioService.getAllPortfolios();
-        res.json(portfolios);
+        res.status(200).json(portfolios);
+        console.log("GET | http://localhost:" + process.env.PORT + "/api/portfolios");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengambil data portofolio' });
@@ -73,9 +77,44 @@ const getPortfoliosByUser = (req, res) => __awaiter(void 0, void 0, void 0, func
         const { userId } = req.params;
         const portfolios = yield portfolioService.getPortfoliosByUser(userId);
         res.json(portfolios);
+        console.log("GET | http://localhost:" + process.env.PORT + "/api/portfolios/:id");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengambil portofolio USER' });
     }
 });
 exports.getPortfoliosByUser = getPortfoliosByUser;
+const updatePortfolio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { portfolioId } = req.params;
+        const { title, description, type, fileUrl } = req.body;
+        if (!title && !description && !type && !fileUrl) {
+            return res.status(400).json({ error: 'Tidak ada data yang diupdate' });
+        }
+        const updatedPortfolio = yield portfolioService.updatePortfolio(portfolioId, { title, description, type, fileUrl });
+        if (!updatedPortfolio) {
+            return res.status(404).json({ error: 'Portofolio tidak ditemukan' });
+        }
+        res.status(200).json(updatedPortfolio);
+        console.log("PUT | http://localhost:" + process.env.PORT + "/api/portfolios");
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Gagal mengupdate portofolio' });
+    }
+});
+exports.updatePortfolio = updatePortfolio;
+const deletePortfolio = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { portfolioId } = req.params;
+        const deleted = yield portfolioService.deletePortfolio(portfolioId);
+        if (!deleted) {
+            return res.status(404).json({ error: 'Portofolio tidak ditemukan' });
+        }
+        res.status(200).json({ message: 'Portofolio berhasil dihapus' });
+        console.log("DELETE | http://localhost:" + process.env.PORT + "/api/portfolios");
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Gagal menghapus portofolio' });
+    }
+});
+exports.deletePortfolio = deletePortfolio;

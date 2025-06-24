@@ -38,7 +38,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const userController = __importStar(require("../controllers/userController"));
+const authMiddleware_1 = require("../middleware/authMiddleware");
 const router = express_1.default.Router();
+// Route untuk register (tidak memerlukan authentication)
 router.post('/register', userController.registerUser);
-router.get('/', userController.getUsers);
+// Route yang memerlukan authentication
+router.use(authMiddleware_1.authenticateToken);
+// Route yang memerlukan role ADMIN
+router.get('/', authMiddleware_1.requireAdmin, userController.getUsers);
 exports.default = router;

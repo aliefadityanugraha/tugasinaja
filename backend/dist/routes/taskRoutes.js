@@ -38,9 +38,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const taskController = __importStar(require("../controllers/taskController"));
+const authMiddleware_1 = require("../middleware/authMiddleware");
 const router = express_1.default.Router();
-router.post('/', taskController.createTask);
-router.get('/', taskController.getAllTasks);
-router.get('/:id', taskController.getTaskById);
-router.delete('/:id', taskController.deleteTask);
+// Semua route memerlukan authentication
+router.use(authMiddleware_1.authenticateToken);
+// Route yang memerlukan role TEACHER atau ADMIN
+router.post('/', authMiddleware_1.requireTeacherOrAdmin, taskController.createTask);
+router.delete('/:id', authMiddleware_1.requireTeacherOrAdmin, taskController.deleteTask);
+// Route yang bisa diakses semua role
+router.get('/', authMiddleware_1.requireAnyRole, taskController.getAllTasks);
+router.get('/:id', authMiddleware_1.requireAnyRole, taskController.getTaskById);
 exports.default = router;

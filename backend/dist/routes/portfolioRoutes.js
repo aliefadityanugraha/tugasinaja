@@ -42,4 +42,5 @@ const router = express_1.default.Router();
 router.post('/', controller.createPortfolio);
 router.get('/', controller.getAllPortfolios);
 router.get('/user/:userId', controller.getPortfoliosByUser);
+router.delete('/:portfolioId', controller.deletePortfolio);
 exports.default = router;

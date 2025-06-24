@@ -53,6 +53,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         const user = yield userService.createUser({ name, email, role: role, password });
         res.status(201).json({ message: 'User created successfully', user });
+        console.log("POST | http://localhost:" + process.env.PORT + "/api/users/register");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal membuat USER', details: err.message });
@@ -63,6 +64,7 @@ const getUsers = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield userService.getAllUsers();
         res.json(users);
+        console.log("GET | http://localhost:" + process.env.PORT + "/api/users");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengambil data USER' });

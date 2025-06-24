@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPortfoliosByUser = exports.getAllPortfolios = exports.createPortfolio = void 0;
+exports.deletePortfolio = exports.updatePortfolio = exports.getPortfoliosByUser = exports.getAllPortfolios = exports.createPortfolio = void 0;
 const prisma_1 = __importDefault(require("../models/prisma"));
 const createPortfolio = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_1.default.portfolio.create({
@@ -45,3 +45,20 @@ const getPortfoliosByUser = (userId) => __awaiter(void 0, void 0, void 0, functi
     });
 });
 exports.getPortfoliosByUser = getPortfoliosByUser;
+const updatePortfolio = (portfolioId, data) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_1.default.portfolio.update({
+        where: { id: portfolioId },
+        data: {
+            description: data.description,
+            type: data.type,
+            fileUrl: data.fileUrl
+        }
+    });
+});
+exports.updatePortfolio = updatePortfolio;
+const deletePortfolio = (portfolioId) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_1.default.portfolio.delete({
+        where: { id: portfolioId }
+    });
+});
+exports.deletePortfolio = deletePortfolio;

@@ -6,5 +6,6 @@ const router = express.Router()
 router.post('/', controller.createPortfolio as express.RequestHandler)
 router.get('/', controller.getAllPortfolios as express.RequestHandler)
 router.get('/user/:userId', controller.getPortfoliosByUser as express.RequestHandler)
+router.delete('/:portfolioId', controller.deletePortfolio as express.RequestHandler)
 
 export default router

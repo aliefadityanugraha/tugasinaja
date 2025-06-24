@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createTask } from '../api/taskApi'
+import { createTask } from '../../api/taskApi'
 import { redirect } from 'react-router-dom'
 
 export default function AddTaskForm() {
@@ -49,9 +49,7 @@ export default function AddTaskForm() {
   }
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Tambah Tugas</h2>
-
+    <div className='pt-5'>
       {success && <p className="text-green-600 mb-2">Tugas berhasil ditambahkan!</p>}
       {error && <p className="text-red-600 mb-2">{error}</p>}
 

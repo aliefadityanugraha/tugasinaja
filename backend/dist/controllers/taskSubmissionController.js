@@ -52,6 +52,7 @@ const submitTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const submission = yield submissionService.submitTask({ taskId, userId, content });
         res.status(201).json(submission);
+        console.log("POST | http://localhost:" + process.env.PORT + "/api/submission");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengumpulkan tugas' });
@@ -61,7 +62,8 @@ exports.submitTask = submitTask;
 const getAllSubmissions = (_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const submissions = yield submissionService.getAllSubmissions();
-        res.json(submissions);
+        res.status(200).json(submissions);
+        console.log("GET | http://localhost:" + process.env.PORT + "/api/submission");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengambil data pengumpulan' });
@@ -72,7 +74,8 @@ const getSubmissionsByTask = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const { taskId } = req.params;
         const submissions = yield submissionService.getSubmissionsByTask(taskId);
-        res.json(submissions);
+        res.status(200).json(submissions);
+        console.log("GET | http://localhost:" + process.env.PORT + "/api/submission/task/:taskId");
     }
     catch (err) {
         res.status(500).json({ error: 'Gagal mengambil data tugas' });

@@ -3,6 +3,7 @@ import * as submissionService from '../services/taskSubmissionService'
 
 export const submitTask = async (req: Request, res: Response) => {
   try {
+
     const { taskId, userId, content } = req.body
 
     if (!taskId || !userId || !content) {
@@ -10,7 +11,10 @@ export const submitTask = async (req: Request, res: Response) => {
     }
 
     const submission = await submissionService.submitTask({ taskId, userId, content })
+    
     res.status(201).json(submission)
+    console.log("POST | http://localhost:"+process.env.PORT+"/api/submission")
+
   } catch (err) {
     res.status(500).json({ error: 'Gagal mengumpulkan tugas' })
   }
@@ -18,8 +22,12 @@ export const submitTask = async (req: Request, res: Response) => {
 
 export const getAllSubmissions = async (_req: Request, res: Response) => {
   try {
+
     const submissions = await submissionService.getAllSubmissions()
-    res.json(submissions)
+
+    res.status(200).json(submissions)
+    console.log("GET | http://localhost:"+process.env.PORT+"/api/submission")
+
   } catch (err) {
     res.status(500).json({ error: 'Gagal mengambil data pengumpulan' })
   }
@@ -27,9 +35,13 @@ export const getAllSubmissions = async (_req: Request, res: Response) => {
 
 export const getSubmissionsByTask = async (req: Request, res: Response) => {
   try {
+
     const { taskId } = req.params
     const submissions = await submissionService.getSubmissionsByTask(taskId)
-    res.json(submissions)
+
+    res.status(200).json(submissions)
+    console.log("GET | http://localhost:"+process.env.PORT+"/api/submission/task/:taskId")
+
   } catch (err) {
     res.status(500).json({ error: 'Gagal mengambil data tugas' })
   }
