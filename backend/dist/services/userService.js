@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getUserByEmail = exports.getAllUsers = exports.createUser = void 0;
+exports.updateUserById = exports.getUserById = exports.getUserByEmail = exports.getAllUsers = exports.createUser = void 0;
 const prisma_1 = __importDefault(require("../models/prisma"));
 const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
     return yield prisma_1.default.user.create({ data: {
@@ -46,3 +46,13 @@ const getUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.getUserById = getUserById;
+const updateUserById = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield prisma_1.default.user.update({
+        where: { id },
+        data: {
+            name: data.name,
+            avatarUrl: data.avatarUrl,
+        },
+    });
+});
+exports.updateUserById = updateUserById;

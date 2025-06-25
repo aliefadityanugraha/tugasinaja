@@ -3,6 +3,49 @@ import * as userService from '../services/userService'
 import { generateTokens, getRolePermissions, getRoleDisplayName } from '../services/authService'
 import { authenticateToken, AuthenticatedRequest } from '../middleware/authMiddleware'
 import jwt from 'jsonwebtoken'
+import { Role } from '@prisma/client'
+
+export const register = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { name, email, password } = req.body
+        const role = req.body.role || 'STUDENT'
+
+        if (!name || !email || !password) {
+            res.status(400).json({ message: "Nama, email, dan password wajib diisi" })
+            return
+        }
+
+        if (!Object.values(Role).includes(role)) {
+            res.status(400).json({ message: "Role tidak valid" })
+            return
+        }
+
+        const existingUser = await userService.getUserByEmail(email)
+        if (existingUser) {
+            res.status(409).json({ message: "Email sudah terdaftar" })
+            return
+        }
+
+        // TODO: Hash password before saving
+        const newUser = await userService.createUser({ name, email, password, role })
+
+        res.status(201).json({
+            message: "Registrasi berhasil",
+            user: {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role,
+            }
+        })
+
+        console.log("POST | http://localhost:"+process.env.PORT+"/api/auth/register")
+
+    } catch (error) {
+        console.error("Register error:", error)
+        res.status(500).json({ message: "Terjadi kesalahan pada server" })
+    }
+}
 
 export const login = async (req : Request, res: Response): Promise<void> => {
 
@@ -67,35 +110,43 @@ export const login = async (req : Request, res: Response): Promise<void> => {
 export const refreshToken = async (req: Request, res: Response): Promise<void> => {
     try {
         const token = req.cookies.refreshToken
+        // console.log("TOKEN", token)
 
         if (!token) {
             res.status(401).json({ message: "Refresh token tidak ditemukan" })
             return
         }
 
-        const decoded: any = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_secret')
-        const user = await userService.getUserById(decoded.id)
+        let decoded: any
+        try {
+            decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'aplikasie-learning')
+            // console.log("DECODED REFRESH:", decoded)
+        } catch (err) {
+            res.status(403).json({ message: "Token tidak valid atau sudah kedaluwarsa cuy" })
+            return
+        }
 
+        const user = await userService.getUserById(decoded.id)
         if (!user) {
             res.status(404).json({ message: "User tidak ditemukan" })
             return
         }
 
         const { accessToken, refreshToken: newRefreshToken } = generateTokens(user)
+        console.log("GENERATE REFRESH TOKEN", newRefreshToken)
 
         res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+        })
 
         res.status(200).json({ accessToken })
         console.log("POST | http://localhost:"+process.env.PORT+"/api/auth/refresh-token")
-
     } catch (err) {
         console.error("Refresh token error:", err)
-        res.status(403).json({ message: "Token tidak valid atau sudah kedaluwarsa" })
+        res.status(500).json({ message: "Terjadi kesalahan pada server" })
     }
 }
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { createPortfolio } from '../api/portfolioApi'
+import { createPortfolio } from '../../api/portfolioApi'
 import { redirect } from 'react-router-dom'
-import { PortfolioType } from '../api/portfolioApi'
+import { PortfolioType } from '../../api/portfolioApi'
 
 export default function AddPortfolioForm() {
   const [title, setTitle] = useState('')
@@ -15,7 +15,6 @@ export default function AddPortfolioForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
   
-    // Validasi
     if (title.trim().length < 3) {
         setError('Judul harus minimal 3 karakter.')
         return

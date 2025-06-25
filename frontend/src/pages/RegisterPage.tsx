@@ -1,25 +1,7 @@
 import { GalleryVerticalEnd } from "lucide-react"
-import { LoginForm } from "@/components/login-form"
-import { useAuth } from "@/contexts/AuthContext"
-import { Navigate } from "react-router-dom"
+import { RegisterForm } from "@/components/register-form"
 
-export default function LoginPage() {
-  const { isAuthenticated, isLoading } = useAuth()
-
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />
-  }
-
-  // Show loading while checking authentication
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-      </div>
-    )
-  }
-
+export default function RegisterPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -32,8 +14,8 @@ export default function LoginPage() {
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
+          <div className="w-full max-w-sm">
+            <RegisterForm />
           </div>
         </div>
       </div>
@@ -46,4 +28,4 @@ export default function LoginPage() {
       </div>
     </div>
   )
-}
+} 

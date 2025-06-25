@@ -9,24 +9,40 @@ const client_1 = require("@prisma/client");
 // Middleware untuk verifikasi JWT token
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    if (!(authHeader === null || authHeader === void 0 ? void 0 : authHeader.startsWith('Bearer '))) {
+        return res.status(401).json({ message: 'Format Authorization salah' });
+    }
+    const token = authHeader && authHeader.split(' ')[1];
+    // console.log("AUTH HEADER", authHeader)
+    // console.log("TOKEN", token)
     if (!token) {
         return res.status(401).json({ message: 'Access token tidak ditemukan' });
     }
+    // try {
+    //     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'aplikasie-learning');
+    //     req.user = {
+    //         id: decoded.id,
+    //         role: decoded.role
+    //     };
+    //     console.log("DECODE TOKEN", decoded)
+    //     next();
+    // } catch (error) {
+    //     return res.status(403).json({ message: 'Token tidak valid atau sudah kedaluwarsa' });
+    // }
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'access_secret');
-        req.user = {
-            id: decoded.id,
-            role: decoded.role
-        };
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'aplikasie-learning');
+        req.user = { id: decoded.id, role: decoded.role };
+        // console.log("DECODE TOKEN", decoded)
         next();
     }
     catch (error) {
-        return res.status(403).json({ message: 'Token tidak valid atau sudah kedaluwarsa' });
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token kadaluwarsa' });
+        }
+        return res.status(403).json({ message: 'Token tidak valid' });
     }
 };
 exports.authenticateToken = authenticateToken;
-// Middleware untuk role-based access control
 const requireRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {

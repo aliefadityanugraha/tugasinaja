@@ -5,30 +5,29 @@ import { Role } from '@prisma/client';
 export const generateTokens = (user: User) => {
     const accessToken = jwt.sign(
         { id: user.id, role: user.role },
-        process.env.JWT_SECRET || 'access_secret',
-        { expiresIn: '15m' }
+        process.env.JWT_SECRET || 'aplikasie-learning',
+        { expiresIn: '1m' }
     );
 
     const refreshToken = jwt.sign(
         { id: user.id },
-        process.env.JWT_REFRESH_SECRET || 'refresh_secret',
+        process.env.JWT_REFRESH_SECRET || 'aplikasie-learning',
         { expiresIn: '7d' }
     );
 
     return { accessToken, refreshToken };
 };
 
-// Fungsi untuk validasi role
 export const validateRole = (userRole: Role, allowedRoles: Role[]): boolean => {
     return allowedRoles.includes(userRole);
 };
 
-// Fungsi untuk mendapatkan role permissions
 export const getRolePermissions = (role: Role) => {
     const permissions = {
         [Role.STUDENT]: {
             canViewTasks: true,
             canSubmitTasks: true,
+            canCreateTasks: false,
             canViewOwnPortfolio: true,
             canCreatePortfolio: true,
             canViewOwnSubmissions: true,
@@ -66,7 +65,6 @@ export const getRolePermissions = (role: Role) => {
     return permissions[role] || {};
 };
 
-// Fungsi untuk mendapatkan role display name
 export const getRoleDisplayName = (role: Role): string => {
     const roleNames = {
         [Role.STUDENT]: 'Siswa',
@@ -77,7 +75,6 @@ export const getRoleDisplayName = (role: Role): string => {
     return roleNames[role] || 'Unknown';
 };
 
-// Fungsi untuk mendapatkan role hierarchy level
 export const getRoleHierarchy = (role: Role): number => {
     const hierarchy = {
         [Role.STUDENT]: 1,

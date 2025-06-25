@@ -26,7 +26,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-import { ModeToggle } from "@/components/mode-toggle"
+// import { ModeToggle } from "@/components/mode-toggle"
 import { useAuth } from "@/contexts/AuthContext"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -37,12 +37,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const items = []
 
     // Common items for all roles
-    items.push({
-      title: "Dashboard",
-      url: "/",
-      icon: Frame,
-      isActive: false,
-    })
+    // items.push({
+    //   title: "Dashboard",
+    //   url: "/",
+    //   icon: Frame,
+    //   isActive: false,
+    // })
 
     // Task management
     if (permissions?.permissions?.canViewTasks) {

@@ -1,6 +1,7 @@
 import TaskListPage from "../components/TaskListPage";
 import { Button } from "@/components/ui/button"
 import AddTaskForm from "@/components/form/AddTaskForm"
+import { useAuth } from "@/contexts/AuthContext";
 
 import {
     Dialog,
@@ -12,30 +13,30 @@ import {
   } from "@/components/ui/dialog"
 
 export default function TaskPage() {
-    return (
-        <>
-            <Dialog>
-                
-                <DialogContent>
-                    <DialogHeader>
-                    <DialogTitle>Tambah Tugas</DialogTitle>
-                    <DialogDescription>
-                        <AddTaskForm/>
-                    </DialogDescription>
-                    </DialogHeader>
-                </DialogContent>
-            
+    const { permissions } = useAuth()
 
-                <main className="p-0 sm:px-10 flex flex-col gap-2 w-full">
-                    <div className="flex align-center justify-between">
-                        <h1 className="text-xl ">All Task</h1>
-                        <Button asChild className="bg-green-700">
-                            <DialogTrigger className="text-white">Tambah Tugas</DialogTrigger>
-                        </Button>
-                    </div>
-                    <TaskListPage />
-                </main>
-            </Dialog>
-        </>
+    return (
+        <Dialog>
+            <DialogContent>
+                <DialogHeader>
+                <DialogTitle>Tambah Tugas</DialogTitle>
+                <DialogDescription>
+                    <AddTaskForm/>
+                </DialogDescription>
+                </DialogHeader>
+            </DialogContent>
+        
+            <main className="p-2 sm:px-5 flex flex-col gap-2 w-full">
+                <div className="flex align-center justify-between py-2">
+                    <h1 className="text-xl ">All Task</h1>
+                    {permissions?.permissions?.canCreateTasks && (
+                        <DialogTrigger asChild className="bg-green-700">
+                            <Button>Tambah Tugas</Button>
+                        </DialogTrigger>
+                        )}
+                </div>
+                <TaskListPage />
+            </main>
+        </Dialog>
     )
 }

@@ -1,9 +1,10 @@
 import express from 'express'
-import { login, refreshToken, logout, getCurrentUser, getRolePermissionsEndpoint } from '../controllers/authController'
+import { register, login, refreshToken, logout, getCurrentUser, getRolePermissionsEndpoint } from '../controllers/authController'
 import { authenticateToken } from '../middleware/authMiddleware'
 
 const router = express.Router()
 
+router.post('/register', register as express.RequestHandler)
 router.post('/login', login as express.RequestHandler)
 router.post('/refresh-token', refreshToken as express.RequestHandler)
 router.post('/logout', logout as express.RequestHandler)

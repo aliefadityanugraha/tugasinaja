@@ -12,25 +12,43 @@ export interface AuthenticatedRequest extends Request {
 // Middleware untuk verifikasi JWT token
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    if (!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Format Authorization salah' })
+    }
+
+    const token = authHeader && authHeader.split(' ')[1];
+    // console.log("AUTH HEADER", authHeader)
+    // console.log("TOKEN", token)
 
     if (!token) {
         return res.status(401).json({ message: 'Access token tidak ditemukan' });
     }
 
+    // try {
+    //     const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'aplikasie-learning');
+    //     req.user = {
+    //         id: decoded.id,
+    //         role: decoded.role
+    //     };
+    //     console.log("DECODE TOKEN", decoded)
+    //     next();
+    // } catch (error) {
+    //     return res.status(403).json({ message: 'Token tidak valid atau sudah kedaluwarsa' });
+    // }
+
     try {
-        const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'access_secret');
-        req.user = {
-            id: decoded.id,
-            role: decoded.role
-        };
+        const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'aplikasie-learning');
+        req.user = { id: decoded.id, role: decoded.role };
+        // console.log("DECODE TOKEN", decoded)
         next();
-    } catch (error) {
-        return res.status(403).json({ message: 'Token tidak valid atau sudah kedaluwarsa' });
+    } catch (error: any) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token kadaluwarsa' });
+        }
+        return res.status(403).json({ message: 'Token tidak valid' });
     }
 };
 
-// Middleware untuk role-based access control
 export const requireRole = (allowedRoles: Role[]) => {
     return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
         if (!req.user) {

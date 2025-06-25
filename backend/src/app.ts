@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 
 import taskRoutes from './routes/taskRoutes'
@@ -18,6 +19,7 @@ app.use(cors({
   credentials: true
 }))
 app.use(express.json())
+app.use(cookieParser())
 
 async function checkDatabaseConnection() {
   try {

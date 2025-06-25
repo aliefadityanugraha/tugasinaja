@@ -1,5 +1,5 @@
 import PortfolioListPage from "../components/PortfolioListPage";
-import AddPortfolioForm from "./AddPortfolioForm";
+import AddPortfolioForm from "../components/form/AddPortfolioForm";
 import { Button } from "@/components/ui/button"
 
 import {
@@ -13,28 +13,25 @@ import {
 
 export default function PortfolioPage() {
     return (
-      <>
-        <Dialog>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>Tambah Portfolio</DialogTitle>
-                <DialogDescription>
-                  <AddPortfolioForm />
-                </DialogDescription>
-                </DialogHeader>
-            </DialogContent>
-        
+      <Dialog>
+          <DialogContent>
+              <DialogHeader>
+              <DialogTitle>Tambah Portfolio</DialogTitle>
+              <DialogDescription>
+                <AddPortfolioForm />
+              </DialogDescription>
+              </DialogHeader>
+          </DialogContent>
 
-            <main className="w-full p-0 sm:px-10 flex flex-col gap-2">
-                <div className="flex align-center justify-between">
-                    <h1 className="text-xl ">All Portfolio</h1>
-                    <Button asChild className="bg-green-700">
-                        <DialogTrigger className="text-white">Tambah Portfolio</DialogTrigger>
-                    </Button>
-                </div>
-                <PortfolioListPage />
-            </main>
-        </Dialog>
-      </>
+          <main className="w-full p-2 sm:px-5 flex flex-col justify-center gap-2">
+              <div className="flex align-center justify-between py-2">
+                  <h1 className="text-xl ">All Portfolio</h1>
+                    <DialogTrigger asChild>
+                      <Button>Tambah Portfolio</Button>
+                    </DialogTrigger>
+              </div>
+              <PortfolioListPage />
+          </main>
+      </Dialog>
     )
 }

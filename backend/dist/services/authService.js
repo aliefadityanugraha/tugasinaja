@@ -7,22 +7,21 @@ exports.getRoleHierarchy = exports.getRoleDisplayName = exports.getRolePermissio
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const generateTokens = (user) => {
-    const accessToken = jsonwebtoken_1.default.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'access_secret', { expiresIn: '15m' });
-    const refreshToken = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET || 'refresh_secret', { expiresIn: '7d' });
+    const accessToken = jsonwebtoken_1.default.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET || 'aplikasie-learning', { expiresIn: '1m' });
+    const refreshToken = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET || 'aplikasie-learning', { expiresIn: '7d' });
     return { accessToken, refreshToken };
 };
 exports.generateTokens = generateTokens;
-// Fungsi untuk validasi role
 const validateRole = (userRole, allowedRoles) => {
     return allowedRoles.includes(userRole);
 };
 exports.validateRole = validateRole;
-// Fungsi untuk mendapatkan role permissions
 const getRolePermissions = (role) => {
     const permissions = {
         [client_1.Role.STUDENT]: {
             canViewTasks: true,
             canSubmitTasks: true,
+            canCreateTasks: false,
             canViewOwnPortfolio: true,
             canCreatePortfolio: true,
             canViewOwnSubmissions: true,
@@ -59,7 +58,6 @@ const getRolePermissions = (role) => {
     return permissions[role] || {};
 };
 exports.getRolePermissions = getRolePermissions;
-// Fungsi untuk mendapatkan role display name
 const getRoleDisplayName = (role) => {
     const roleNames = {
         [client_1.Role.STUDENT]: 'Siswa',
@@ -69,7 +67,6 @@ const getRoleDisplayName = (role) => {
     return roleNames[role] || 'Unknown';
 };
 exports.getRoleDisplayName = getRoleDisplayName;
-// Fungsi untuk mendapatkan role hierarchy level
 const getRoleHierarchy = (role) => {
     const hierarchy = {
         [client_1.Role.STUDENT]: 1,

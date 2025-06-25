@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isAuthenticated = !!user
 
-  // Check if user is logged in on app start
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('accessToken')

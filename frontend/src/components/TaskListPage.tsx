@@ -18,15 +18,22 @@ export default function TaskListPage() {
 
   return (
     <>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-center">
       {tasks.map((task: any) => (
-        <Card className="w-full p-5 bg-stone-50 dark:bg-stone-900" key={task.id}>
-              <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {task.title}
-              </h5>
-              <p className="font-normal text-black dark:text-stone-50">
-              {task.description}
-              </p>
+        <Card className="w-full p-5 max-w-sm flex flex-col justify-between gap-2" key={task.id}>
+              <div>
+                <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white pb-2">
+                  {task.title}
+                </h5>
+                <p className="font-normal text-muted-foreground">
+                  {task.description}
+                </p>
+                <div className="flex flex-col py-2">
+                  <p><span className="font-semibold">Kategori:</span> {task.category}</p>
+                  <p><span className="font-semibold">Poin:</span> {task.points}</p>
+                  <p><span className="font-semibold">Tenggat Waktu:</span> {task.dueDate}</p>
+                </div>
+              </div>
               <Button asChild>
                 <Link to={`/tasks/detail/${task.id}`} className='flex items-center'>
                 Read more

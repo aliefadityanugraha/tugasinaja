@@ -53,7 +53,7 @@ export default function DetailTaskPage() {
     <div className="w-full p-5">
         <h2 className="text-2xl font-bold mb-4">{task.title}</h2>
         <p className="mb-2"><span className="font-semibold">Deskripsi:</span> {task.description}</p>
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
           <p className="mb-2"><span className="font-semibold">Kategori:</span> {task.category}</p>
           <p className="mb-2"><span className="font-semibold">Poin:</span> {task.points}</p>
           <p className="mb-2"><span className="font-semibold">Tenggat Waktu:</span> {task.dueDate}</p>

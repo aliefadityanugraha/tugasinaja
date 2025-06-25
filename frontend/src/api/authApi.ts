@@ -1,5 +1,11 @@
 import api from './axios'
 
+export interface RegisterRequest {
+    name: string
+    email: string
+    password: string
+}
+
 export interface LoginRequest {
   email: string
   password: string
@@ -42,6 +48,17 @@ export interface RolePermissions {
   }
 }
 
+export interface UpdateProfileRequest {
+  name: string;
+  avatarUrl?: string;
+}
+
+// Register
+export const register = async (data: RegisterRequest): Promise<{ message: string }> => {
+  const response = await api.post<{ message: string }>('/auth/register', { ...data, role: 'STUDENT' })
+  return response.data
+}
+
 // Login
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>('/auth/login', credentials)
@@ -70,4 +87,12 @@ export const getRolePermissions = async (): Promise<RolePermissions> => {
 export const refreshToken = async (): Promise<{ accessToken: string }> => {
   const response = await api.post<{ accessToken: string }>('/auth/refresh-token')
   return response.data
-} 
+}
+
+export const updateCurrentUser = async (data: UpdateProfileRequest): Promise<{ message: string; user: UserInfo }> => {
+  const response = await api.put<{ message: string; user: UserInfo }>(
+    '/users/me',
+    data
+  );
+  return response.data;
+};

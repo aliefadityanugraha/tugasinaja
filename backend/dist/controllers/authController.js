@@ -45,10 +45,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRolePermissionsEndpoint = exports.getCurrentUser = exports.logout = exports.refreshToken = exports.login = void 0;
+exports.getRolePermissionsEndpoint = exports.getCurrentUser = exports.logout = exports.refreshToken = exports.login = exports.register = void 0;
 const userService = __importStar(require("../services/userService"));
 const authService_1 = require("../services/authService");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const client_1 = require("@prisma/client");
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { name, email, password } = req.body;
+        const role = req.body.role || 'STUDENT';
+        if (!name || !email || !password) {
+            res.status(400).json({ message: "Nama, email, dan password wajib diisi" });
+            return;
+        }
+        if (!Object.values(client_1.Role).includes(role)) {
+            res.status(400).json({ message: "Role tidak valid" });
+            return;
+        }
+        const existingUser = yield userService.getUserByEmail(email);
+        if (existingUser) {
+            res.status(409).json({ message: "Email sudah terdaftar" });
+            return;
+        }
+        // TODO: Hash password before saving
+        const newUser = yield userService.createUser({ name, email, password, role });
+        res.status(201).json({
+            message: "Registrasi berhasil",
+            user: {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role,
+            }
+        });
+        console.log("POST | http://localhost:" + process.env.PORT + "/api/auth/register");
+    }
+    catch (error) {
+        console.error("Register error:", error);
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    }
+});
+exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
@@ -102,21 +139,31 @@ exports.login = login;
 const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const token = req.cookies.refreshToken;
+        // console.log("TOKEN", token)
         if (!token) {
             res.status(401).json({ message: "Refresh token tidak ditemukan" });
             return;
         }
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_REFRESH_SECRET || 'refresh_secret');
+        let decoded;
+        try {
+            decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_REFRESH_SECRET || 'aplikasie-learning');
+            // console.log("DECODED REFRESH:", decoded)
+        }
+        catch (err) {
+            res.status(403).json({ message: "Token tidak valid atau sudah kedaluwarsa cuy" });
+            return;
+        }
         const user = yield userService.getUserById(decoded.id);
         if (!user) {
             res.status(404).json({ message: "User tidak ditemukan" });
             return;
         }
         const { accessToken, refreshToken: newRefreshToken } = (0, authService_1.generateTokens)(user);
+        console.log("GENERATE REFRESH TOKEN", newRefreshToken);
         res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
         res.status(200).json({ accessToken });
@@ -124,7 +171,7 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     catch (err) {
         console.error("Refresh token error:", err);
-        res.status(403).json({ message: "Token tidak valid atau sudah kedaluwarsa" });
+        res.status(500).json({ message: "Terjadi kesalahan pada server" });
     }
 });
 exports.refreshToken = refreshToken;
